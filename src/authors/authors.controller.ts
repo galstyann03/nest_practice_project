@@ -1,9 +1,12 @@
-import { Controller, Get, Param, Post, Body, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, Delete, UseGuards } from '@nestjs/common';
 import { AuthorsService } from './authors.service';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
+import { ApiKeyGuard } from 'src/common/guards/api-key.guard';
+import { ParseObjectIdPipe } from '@nestjs/mongoose/dist/pipes/parse-object-id.pipe';
 
 @Controller('api/authors')
+@UseGuards(ApiKeyGuard)
 export class AuthorsController {
     constructor(private readonly authorService: AuthorsService) {}
 
@@ -11,9 +14,9 @@ export class AuthorsController {
     findAll() {
         return this.authorService.findAll();
     }
-
+    
     @Get(':id')
-    findOne(@Param('id') id: string) {
+    findOne(@Param('id', ParseObjectIdPipe) id: string) {
         return this.authorService.findOne(id);
     }
 
