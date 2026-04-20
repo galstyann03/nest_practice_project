@@ -11,6 +11,6 @@ async function bootstrap() {
     transform: true,
   }));
   app.useGlobalInterceptors(new TransformInterceptor());
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.APP_PORT ?? 3000);
 }
 bootstrap();

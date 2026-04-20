@@ -1,0 +1,39 @@
+services:
+  app:
+    build: .
+    container_name: nest-practice-app
+    restart: unless-stopped
+    ports:
+      - "0.0.0.0:${APP_PORT}:3000"
+    environment:
+      PORT: 3000
+      HOST: 0.0.0.0
+      MONGO_URI: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongodb:27017/${MONGO_DATABASE}?authSource=admin
+      LOG_LEVEL: ${LOG_LEVEL}
+    depends_on:
+      mongodb:
+        condition: service_started
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:7
+    container_name: nest-practice-mongo
+    restart: unless-stopped
+    ports:
+      - "0.0.0.0:${MONGO_PORT}:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
