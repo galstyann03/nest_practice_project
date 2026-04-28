@@ -1,4 +1,4 @@
-import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config/dist/config.module';
 import { MongooseModule } from '@nestjs/mongoose/dist/mongoose.module';
 import { AuthorsModule } from './authors/authors.module';

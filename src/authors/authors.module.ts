@@ -9,7 +9,6 @@ import { MongooseModule } from '@nestjs/mongoose/dist/mongoose.module';
     MongooseModule.forFeature([{ name: Author.name, schema: AuthorSchema }]),
   ],
   controllers: [AuthorsController],
-  providers: [AuthorsService]
+  providers: [AuthorsService],
 })
-
 export class AuthorsModule {}
