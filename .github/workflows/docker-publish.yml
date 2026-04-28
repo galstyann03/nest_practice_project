@@ -1,7 +1,11 @@
 name: Docker Publish
 
 on:
-  push:
+  workflow_run:
+    workflows:
+      - NestJS CI
+    types:
+      - completed
     branches:
       - main
       - master
@@ -10,6 +14,8 @@ jobs:
   docker-publish:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
+
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     permissions:
       contents: read
@@ -38,4 +44,4 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.IMAGE_NAME }}:${{ github.event.workflow_run.head_sha }}
