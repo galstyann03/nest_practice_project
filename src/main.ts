@@ -3,8 +3,6 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 
-const x = 1;
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(

@@ -1,6 +1,7 @@
 name: Docker Publish
 
 on:
+  workflow_dispatch:
   workflow_run:
     workflows:
       - NestJS CI
@@ -15,7 +16,7 @@ jobs:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
 
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && (github.ref_name == 'main' || github.ref_name == 'master')) || github.event.workflow_run.conclusion == 'success' }}
 
     permissions:
       contents: read
@@ -24,6 +25,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -32,9 +35,25 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Set lowercase image name
         run: |
           echo "IMAGE_NAME=ghcr.io/${GITHUB_REPOSITORY,,}/nest-practice" >> $GITHUB_ENV
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=sha,format=long
+
+      - name: Show resolved Docker tags
+        run: |
+          echo "${{ steps.meta.outputs.tags }}"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -42,6 +61,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: |
-            ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ github.event.workflow_run.head_sha }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
