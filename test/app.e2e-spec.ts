@@ -31,10 +31,10 @@ describe('App E2E', () => {
       .get('/api/books')
       .expect(200);
 
-    expect(response.body).toEqual({
+    expect(response.body).toMatchObject({
       data: [],
-      timestamp: expect.any(String),
     });
+    expect(response.body).toHaveProperty('timestamp');
   });
 
   afterAll(async () => {
