@@ -10,6 +10,11 @@ services:
       HOST: 0.0.0.0
       MONGO_URI: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongodb:27017/${MONGO_DATABASE}?authSource=admin
       LOG_LEVEL: ${LOG_LEVEL}
+      SMTOP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      MAIL_FROM: ${MAIL_FROM}
     depends_on:
       mongodb:
         condition: service_started
@@ -28,6 +33,16 @@ services:
       MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
     volumes:
       - mongo_data:/data/db
+    networks:
+      - app-network
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: nest-practice-mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
     networks:
       - app-network
 
