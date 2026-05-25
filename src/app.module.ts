@@ -5,6 +5,7 @@ import { AuthorsModule } from './authors/authors.module';
 import { BooksModule } from './books/books.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
     AuthorsModule,
     BooksModule,
     ReviewsModule,
+    MailModule,
   ],
 })
 export class AppModule implements NestModule {
