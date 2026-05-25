@@ -10,6 +10,61 @@ The workflow files are inside:
 
 Because this folder is inside the `nest-practice` project, the workflow paths are written as if `nest-practice` is the repository root.
 
+## What To Do Next
+
+Current status:
+
+- CI already checks lint, unit tests, build, e2e tests, and Docker image build.
+- Docker publish already pushes to GitHub Container Registry after the CI workflow succeeds.
+- Local verification passed with `npm run lint`, `npm test -- --runInBand`, and `npm run build`.
+
+Next useful improvements:
+
+- Check GitHub repository secrets for Telegram notifications.
+- Run the full pipeline from GitHub Actions after pushing to `main` or opening a pull request.
+- Make sure the GitHub package visibility is what you want after the first Docker image is published.
+- Add deployment only when you have a real target server or platform.
+- Add SMTP/email secrets later when email verification is implemented.
+
+## GitHub Secrets
+
+GitHub Actions secrets are configured in:
+
+```txt
+GitHub repository -> Settings -> Secrets and variables -> Actions -> Repository secrets
+```
+
+This project currently expects these custom secrets:
+
+```txt
+TELEGRAM_BOT_TOKEN
+TELEGRAM_CHAT_ID
+```
+
+They are used by the `notify-telegram` job in `.github/workflows/ci.yml`.
+
+This one does not need to be created manually:
+
+```txt
+GITHUB_TOKEN
+```
+
+GitHub automatically creates `GITHUB_TOKEN` for every workflow run. The Docker publish workflow uses it to push the image to GitHub Container Registry.
+
+The Mongo values in the CI workflow are not GitHub secrets right now. They are only temporary credentials for the Mongo service container used during tests.
+
+When SMTP/email verification is added, the project will probably need new secrets like:
+
+```txt
+SMTP_HOST
+SMTP_PORT
+SMTP_USER
+SMTP_PASS
+MAIL_FROM
+```
+
+For local development, these belong in `.env`. For GitHub Actions or deployment, they belong in GitHub Secrets or the deployment platform's secret manager.
+
 ## CI Workflow
 
 File:
